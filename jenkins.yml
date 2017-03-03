@@ -1,0 +1,37 @@
+---
+- hosts: ci
+  tasks:
+    - name: installation de Git
+      package: name=git state=present
+
+    - name: installation de Maven
+      package: name=maven state=present
+
+    - name: installation de Tomcat 8
+      package: name=tomcat8 state=present
+
+    - name: création du répertoire pour jenkins
+      file:
+        path: /home/jenkins/.m2
+        state: directory
+        owner: tomcat8
+        group: tomcat8
+
+    - name: configuration du répertoire pour jenkins
+      lineinfile:
+        name: '/etc/default/tomcat8'
+        line: 'JENKINS_HOME=/home/jenkins'
+
+    - name: copie des settings Maven pour Jenkins
+      copy:
+        src: settings.xml
+        dest: /home/jenkins/.m2/settings.xml
+        owner: tomcat8
+        group: tomcat8
+
+    - name: installation de jenkins
+      get_url:
+        url: http://mirrors.jenkins.io/war-stable/latest/jenkins.war
+        dest: /var/lib/tomcat8/webapps
+        group: tomcat8
+        owner: tomcat8
