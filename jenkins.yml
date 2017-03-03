@@ -1,9 +1,13 @@
 ---
 - hosts: ci
 
+  vars:
+    jenkins_home: '/home/jenkins'
+    jenkins_war: '{{jenkins_home}}/jenkins.war'
+
   handlers:
     - name: restart tomcat8
-      service: name=tomcat8 status=retarted
+      service: name=tomcat8 state=restarted
 
   tasks:
     - name: installation de Git
@@ -20,7 +24,7 @@
 
     - name: création du répertoire pour jenkins
       file:
-        path: /home/jenkins/.m2
+        path: '{{jenkins_home}}/.m2'
         state: directory
         owner: tomcat8
         group: tomcat8
@@ -28,20 +32,29 @@
     - name: configuration du répertoire pour jenkins
       lineinfile:
         name: '/etc/default/tomcat8'
-        line: 'JENKINS_HOME=/home/jenkins'
+        line: 'JENKINS_HOME={{jenkins_home}}'
       notify:
         - restart tomcat8
 
     - name: copie des settings Maven pour Jenkins
       copy:
         src: settings.xml
-        dest: /home/jenkins/.m2/settings.xml
+        dest: '{{jenkins_home}}/.m2/settings.xml'
         owner: tomcat8
         group: tomcat8
 
     - name: installation de jenkins
       get_url:
         url: http://mirrors.jenkins.io/war-stable/latest/jenkins.war
-        dest: /var/lib/tomcat8/webapps
+        dest: '{{jenkins_war}}'
         group: tomcat8
         owner: tomcat8
+
+    - name: copie du fichier de déploiement pour Jenkins
+      template:
+        src: jenkins-context.xml
+        dest: /var/lib/tomcat8/conf/Catalina/localhost/jenkins.xml
+        owner: tomcat8
+        group: tomcat8
+      notify:
+        - restart tomcat8
