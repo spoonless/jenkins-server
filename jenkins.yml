@@ -1,11 +1,19 @@
 ---
 - hosts: ci
+
+  handlers:
+    - name: restart tomcat8
+      service: name=tomcat8 status=retarted
+
   tasks:
     - name: installation de Git
       package: name=git state=present
 
     - name: installation de Maven
       package: name=maven state=present
+
+    - name: installation du jdk8
+      package: name=openjdk-8-jdk-headless state=present
 
     - name: installation de Tomcat 8
       package: name=tomcat8 state=present
@@ -21,6 +29,8 @@
       lineinfile:
         name: '/etc/default/tomcat8'
         line: 'JENKINS_HOME=/home/jenkins'
+      notify:
+        - restart tomcat8
 
     - name: copie des settings Maven pour Jenkins
       copy:
