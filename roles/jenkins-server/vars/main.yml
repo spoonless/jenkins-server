@@ -1,0 +1,5 @@
+tomcat_home: '/home/tomcat8'
+tomcat_dir: '/var/lib/tomcat8'
+jenkins_home: '{{tomcat_home}}/jenkins'
+jenkins_war: '{{tomcat_home}}/jenkins.war'
+jenkins_url: 'http://mirrors.jenkins.io/war-stable/latest/jenkins.war'
