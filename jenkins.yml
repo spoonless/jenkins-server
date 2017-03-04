@@ -2,8 +2,9 @@
 - hosts: ci
 
   vars:
-    jenkins_home: '/home/jenkins'
-    jenkins_war: '{{jenkins_home}}/jenkins.war'
+    tomcat_home: '/home/tomcat8'
+    jenkins_home: '{{tomcat_home}}/jenkins'
+    jenkins_war: '{{tomcat_home}}/jenkins.war'
 
   handlers:
     - name: restart tomcat8
@@ -19,12 +20,15 @@
     - name: installation du jdk8
       package: name=openjdk-8-jdk-headless state=present
 
+    - name: création compte pour Tomcat8
+      user: name=tomcat8 shell=/bin/false system=yes home='{{tomcat_home}}'
+
     - name: installation de Tomcat 8
       package: name=tomcat8 state=present
 
-    - name: création du répertoire pour jenkins
+    - name: création des répertoires pour jenkins
       file:
-        path: '{{jenkins_home}}/.m2'
+        path: '{{jenkins_home}}'
         state: directory
         owner: tomcat8
         group: tomcat8
@@ -35,13 +39,6 @@
         line: 'JENKINS_HOME={{jenkins_home}}'
       notify:
         - restart tomcat8
-
-    - name: copie des settings Maven pour Jenkins
-      copy:
-        src: settings.xml
-        dest: '{{jenkins_home}}/.m2/settings.xml'
-        owner: tomcat8
-        group: tomcat8
 
     - name: installation de jenkins
       get_url:
