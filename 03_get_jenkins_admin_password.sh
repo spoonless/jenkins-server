@@ -7,4 +7,4 @@ do
   read -p "Donnez le nom du nouveau conteneur: " CONTAINER_NAME
 done
 
-lxc exec $CONTAINER_NAME -- cat /home/tomcat8/jenkins/secrets/initialAdminPassword
+sudo lxc-attach -n $CONTAINER_NAME -- cat /home/tomcat8/jenkins/secrets/initialAdminPassword
