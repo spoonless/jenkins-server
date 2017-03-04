@@ -3,11 +3,15 @@
 
   vars:
     tomcat_home: '/home/tomcat8'
+    tomcat_webapps_dir: '/var/lib/tomcat8/webapps'
     jenkins_home: '{{tomcat_home}}/jenkins'
     jenkins_war: '{{tomcat_home}}/jenkins.war'
 
   handlers:
-    - name: restart tomcat8
+    - name: déplacer l'appli web ROOT par défaut
+      command: creates="{{tomcat_webapps_dir}}/doc" mv {{tomcat_webapps_dir}}/ROOT {{tomcat_webapps_dir}}/doc
+
+    - name: relancer Tomcat
       service: name=tomcat8 state=restarted
 
   tasks:
@@ -21,10 +25,16 @@
       package: name=openjdk-8-jdk-headless state=present
 
     - name: création compte pour Tomcat8
-      user: name=tomcat8 shell=/bin/false system=yes home='{{tomcat_home}}'
+      user:
+        name: tomcat8
+        shell: /bin/false
+        system: yes
+        home: '{{tomcat_home}}'
 
     - name: installation de Tomcat 8
       package: name=tomcat8 state=present
+      notify:
+        - déplacer l'appli web ROOT par défaut
 
     - name: création des répertoires pour jenkins
       file:
@@ -38,7 +48,7 @@
         name: '/etc/default/tomcat8'
         line: 'JENKINS_HOME={{jenkins_home}}'
       notify:
-        - restart tomcat8
+        - relancer Tomcat
 
     - name: installation de jenkins
       get_url:
@@ -50,8 +60,8 @@
     - name: copie du fichier de déploiement pour Jenkins
       template:
         src: jenkins-context.xml
-        dest: /var/lib/tomcat8/conf/Catalina/localhost/jenkins.xml
+        dest: /var/lib/tomcat8/conf/Catalina/localhost/ROOT.xml
         owner: tomcat8
         group: tomcat8
       notify:
-        - restart tomcat8
+        - relancer Tomcat
