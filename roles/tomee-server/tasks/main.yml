@@ -1,0 +1,29 @@
+- name: installation du jdk8
+  package: name=openjdk-8-jdk-headless state=present
+
+- name: création du compte pour TomEE
+  user:
+    name: tomee
+    shell: /bin/false
+    system: yes
+    home: '{{tomee_home}}'
+
+- name: installation de TomEE
+  unarchive:
+    src: '{{tomee_url}}'
+    dest: '{{tomee_home}}'
+    remote_src: True
+    extra_opts: "--strip-components=1"
+    creates: '{{tomee_home}}/bin/startup.sh'
+    group: tomee
+    owner: tomee
+
+- name: copie du fichier unit Systemd pour TomEE
+  template:
+    src: 'roles/tomee-server/templates/tomee.service'
+    dest: '/etc/systemd/system/tomee.service'
+  notify:
+    - activer TomEE
+
+- name: vérifier que TomEE est actif
+  service: state=started name=tomee

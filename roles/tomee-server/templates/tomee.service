@@ -1,0 +1,26 @@
+# Systemd unit file for tomcat
+[Unit]
+Description=Apache TomEE Web Application Container
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+Environment=JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
+Environment=CATALINA_PID={{tomee_home}}/temp/tomcat.pid
+Environment=CATALINA_HOME={{tomee_home}}
+Environment=CATALINA_BASE={{tomee_home}}
+Environment='CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC'
+Environment='JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
+
+ExecStart={{tomee_home}}/bin/startup.sh
+ExecStop={{tomee_home}}/bin/shutdown.sh
+
+User=tomee
+Group=tomee
+UMask=0007
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

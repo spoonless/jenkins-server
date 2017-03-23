@@ -1,0 +1,2 @@
+tomee_home: "/opt/tomee"
+tomee_url: "http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.3/apache-tomee-7.0.3-plus.tar.gz"
