@@ -28,7 +28,5 @@
     dest: '/etc/systemd/system/tomee.service'
   notify:
     - recharger daemon
-    - activer TomEE
+    - redemarrer TomEE
 
-- name: verifier que TomEE est actif
-  service: state=started name=tomee
