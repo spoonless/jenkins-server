@@ -11,7 +11,7 @@ if [ $(sudo lxc-ls -1 | grep -c "^$CONTAINER_NAME$") == 1 ]
 then
   echo "Un conteneur porte déja ce nom..."
 else
-  sudo lxc-create --template download --name "$CONTAINER_NAME" -- -d ubuntu -r yakkety -a amd64
+  sudo lxc-create --template download --name "$CONTAINER_NAME" -- -d ubuntu -r xenial -a amd64
 fi
 
 sudo lxc-start -n "$CONTAINER_NAME"
