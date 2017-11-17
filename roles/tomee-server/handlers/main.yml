@@ -1,2 +1,5 @@
+- name: recharger daemon
+  command: systemctl daemon-reload
+
 - name: activer TomEE
-  systemd: daemon_reload=yes enabled=yes state=started name=tomee
+  service: state=started name=tomee

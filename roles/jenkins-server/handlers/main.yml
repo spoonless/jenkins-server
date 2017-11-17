@@ -1,4 +1,4 @@
-- name: déplacer l'appli web ROOT par défaut
+- name: deplacer l'appli web ROOT par defaut
   command: creates="{{tomcat_dir}}/webapps/doc" mv {{tomcat_dir}}/webapps/ROOT {{tomcat_dir}}/webapps/doc
 
 - name: relancer Tomcat
