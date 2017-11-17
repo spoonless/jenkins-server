@@ -2,4 +2,4 @@
   command: systemctl daemon-reload
 
 - name: redemarrer TomEE
-  service: state=restarted name=tomee
+  service: state=restarted enabled=yes name=tomee
